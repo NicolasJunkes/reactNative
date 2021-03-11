@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Lista de Convidados</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Lista de Convidados</h1>
+      <ul id="lista"></ul>
+
+      <input id="campo" type="text" placeholder="Digite o nome do Convidado" />
+      <button id="botao">Cadastrar</button>
+    </div>
+    <script type="text/javascript">
+      var convidados = JSON.parse(localStorage.getItem("convidados")) || [];
+
+      var elLista = document.getElementById("lista");
+      var elCampo = document.getElementById("campo");
+      var elBotao = document.getElementById("botao");
+
+      elBotao.onclick = function () {
+        var nome = elCampo.value;
+        convidados.push({ nome: nome });
+        elCampo.value = "";
+
+        salvarConvidados();
+        listarConvidados();
+      };
+
+      function salvarConvidados() {
+        localStorage.setItem("convidados", JSON.stringify(convidados));
+      }
+
+      function listarConvidados() {
+        elLista.innerHTML = "";
+
+        for (const convidado of convidados) {
+          var elConvidado = document.createElement("li");
+          var elNome = document.createTextNode(convidado.nome);
+
+          var elExcluir = document.createElement("a");
+          elExcluir.setAttribute("href", "#");
+          elExcluir.onclick = function () {
+            convidados = convidados.filter(function (item) {
+              return item.nome !== convidado.nome;
+            });
+
+            salvarConvidados();
+            listarConvidados();
+          };
+
+          var elExcluirTexto = document.createTextNode("Excluir");
+
+          elExcluir.appendChild(elExcluirTexto);
+          elConvidado.appendChild(elNome);
+          elConvidado.appendChild(elExcluir);
+          elLista.appendChild(elConvidado);
+        }
+      }
+
+      listarConvidados();
+    </script>
+  </body>
+</html>
